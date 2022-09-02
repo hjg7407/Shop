@@ -1,9 +1,9 @@
 .DS_Store
-/shop/node_modules
+/shop-web/node_modules
 /shop-admin/node_modules
 /shop-admin/mock
 /shop-server/node_modules
-/shop/dist
+/shop-web/dist
 /shop-admin/dist
 /shop-server/dist
 
