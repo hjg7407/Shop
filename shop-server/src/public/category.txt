@@ -1,0 +1,6 @@
+insert into `category`(`category_name`,`category_img`) values
+('家用电器','/images/category/electrical.png'),
+('数码产品','/images/category/digital.png'),
+('图书文具','/images/category/books.png'),
+('生鲜食品','/images/category/foods.png'),
+('生活用品','/images/category/supplies.png');

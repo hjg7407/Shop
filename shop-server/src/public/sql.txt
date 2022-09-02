@@ -1,0 +1,148 @@
+CREATE TABLE `category` (
+  `category_id` int NOT NULL AUTO_INCREMENT,
+  `category_name` varchar(20) NOT NULL,
+  `category_img` varchar(100) NOT NULL,
+  PRIMARY KEY (`category_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+
+CREATE TABLE `goods` (
+  `goods_id` int NOT NULL AUTO_INCREMENT,
+  `category_id` int NOT NULL,
+  `goods_code` varchar(20) NOT NULL,
+  `goods_name` varchar(100) NOT NULL,
+  `goods_title` varchar(100) DEFAULT NULL,
+  `goods_info` longtext,
+  `goods_picture` varchar(100) NOT NULL,
+  `goods_price` decimal(10,2) NOT NULL,
+  `goods_selling_price` decimal(10,2) NOT NULL,
+  `goods_number` int NOT NULL,
+  `goods_sales` int DEFAULT NULL,
+  PRIMARY KEY (`goods_id`),
+  UNIQUE KEY `goods_code` (`goods_code`) USING BTREE,
+  KEY `goods_categoryID` (`category_id`),
+  CONSTRAINT `goods_categoryID` FOREIGN KEY (`category_id`) REFERENCES `category` (`category_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+
+CREATE TABLE `goods_banner` (
+  `goods_banner_id` int NOT NULL AUTO_INCREMENT,
+  `goods_id` int NOT NULL,
+  `goods_banner_imgPath` varchar(100) NOT NULL,
+  PRIMARY KEY (`goods_banner_id`),
+  KEY `goods_bannner_goodsID` (`goods_id`),
+  CONSTRAINT `goods_bannner_goodsID` FOREIGN KEY (`goods_id`) REFERENCES `goods` (`goods_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+
+CREATE TABLE `banner` (
+  `banner_id` int NOT NULL AUTO_INCREMENT,
+  `imgPath` varchar(100) NOT NULL,
+  PRIMARY KEY (`banner_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+
+CREATE TABLE `users` (
+  `user_id` int NOT NULL AUTO_INCREMENT,
+  `username` varchar(20) NOT NULL,
+  `phone` varchar(11) NOT NULL,
+  `password` varchar(100) NOT NULL,
+  `isAdmin` smallint NOT NULL DEFAULT '0',
+  PRIMARY KEY (`user_id`),
+  UNIQUE KEY `username` (`username`) USING BTREE,
+  UNIQUE KEY `phone` (`phone`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+
+CREATE TABLE `collection` (
+  `collection_id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `goods_id` int NOT NULL,
+  `collection_time` bigint DEFAULT NULL,
+  PRIMARY KEY (`collection_id`),
+  KEY `collection_userID` (`user_id`),
+  KEY `collection_goodsID` (`goods_id`),
+  CONSTRAINT `collection_goodsID` FOREIGN KEY (`goods_id`) REFERENCES `goods` (`goods_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `collection_userID` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+
+CREATE TABLE `shoppingcar` (
+  `shoppingcar_id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `goods_id` int NOT NULL,
+  `number` int NOT NULL,
+  PRIMARY KEY (`shoppingcar_id`),
+  KEY `shoppingcar_userID` (`user_id`),
+  KEY `shoppingcar_goodsID` (`goods_id`),
+  CONSTRAINT `shoppingcar_goodsID` FOREIGN KEY (`goods_id`) REFERENCES `goods` (`goods_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `shoppingcar_userID` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+
+CREATE TABLE `orders` (
+  `orders_id` int NOT NULL AUTO_INCREMENT,
+  `order_id` varchar(20) NOT NULL,
+  `user_id` int NOT NULL,
+  `order_time` bigint NOT NULL,
+  `order_status` smallint NOT NULL,
+  `order_price` decimal(10,2) NOT NULL,
+  PRIMARY KEY (`orders_id`),
+  UNIQUE KEY `order_id` (`order_id`),
+  KEY `orders_userID` (`user_id`),
+  CONSTRAINT `orders_userID` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+
+CREATE TABLE `order_details` (
+  `order_details_id` int NOT NULL AUTO_INCREMENT,
+  `order_id` varchar(20) NOT NULL,
+  `goods_id` int NOT NULL,
+  `goods_picture` varchar(100) NOT NULL,
+  `goods_name` varchar(100) NOT NULL,
+  `goods_price` decimal(10,2) NOT NULL,
+  `goods_number` int NOT NULL,
+  PRIMARY KEY (`order_details_id`),
+  KEY `order_details_oederID` (`order_id`),
+  CONSTRAINT `order_details_oederID` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+
+CREATE TABLE `order_express` (
+  `order_express_id` int NOT NULL AUTO_INCREMENT,
+  `order_id` varchar(20) NOT NULL,
+  `express_id` varchar(20) DEFAULT NULL,
+  `express_name` varchar(20) DEFAULT NULL,
+  `address_name` varchar(20) NOT NULL,
+  `address_phone` varchar(11) NOT NULL,
+  `address_details` varchar(100) NOT NULL,
+  PRIMARY KEY (`order_express_id`),
+  KEY `order_express_orderID` (`order_id`),
+  CONSTRAINT `order_express_orderID` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+
+CREATE TABLE `address` (
+  `address_id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `address_name` varchar(20) NOT NULL,
+  `address_phone` varchar(11) NOT NULL,
+  `address_details` varchar(100) NOT NULL,
+  `address_default` int NOT NULL DEFAULT '0',
+  PRIMARY KEY (`address_id`),
+  KEY `address_userID` (`user_id`),
+  CONSTRAINT `address_userID` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+

@@ -1,0 +1,5 @@
+insert into `banner`(`imgPath`) values
+('/images/banner/banner01.png'),
+('/images/banner/banner02.png'),
+('/images/banner/banner03.png'),
+('/images/banner/banner04.png');
